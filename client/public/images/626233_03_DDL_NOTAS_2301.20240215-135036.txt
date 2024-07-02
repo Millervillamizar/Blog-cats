@@ -1,0 +1,841 @@
++ cat /usr/TMT/trans/GISQA02/ejecutados/logs/03_DDL_NOTAS_2301.20240215-135036.log
+SQL> alter session set current_schema=NEXUS_GIS;
+
+Session altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> tablas, vistas y sequences OT_*
+SP2-0734: unknown command beginning "tablas, vi..." - rest of line ignored.
+SQL> 
+SQL> CREATE SEQUENCE OT_TIPO_SEQ
+  2  MINVALUE 1
+  3   MAXVALUE 999999999999999999999999999
+  4   START WITH 1
+  5   INCREMENT BY 1
+  6   CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.06
+SQL> 
+SQL> 
+SQL> CREATE TABLE OT_TIPO(
+  2  	 ID NUMBER(19,0) NOT NULL,
+  3  	 CLASE_ID NUMBER(10,0),
+  4  	 DESCRIPCION VARCHAR2(255 CHAR),
+  5  	 NOMBRE VARCHAR2(255 CHAR),
+  6  	 REQUIERE_PERMISOS NUMBER(1,0) default 1,    /* 0: no requiere, 1: si requiere */
+  7  	 USO_INTERNO NUMBER(1,0) default 0    /* 0: no, lo carga el usuario, 1: si, lo carga una app. */
+  8  );
+
+Table created.
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> 
+SQL> ALTER TABLE OT_TIPO ADD ( CONSTRAINT OT_TIPO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> CREATE SEQUENCE OT_TIPO_ESTADO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> CREATE TABLE OT_TIPO_ESTADO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     DESCRIPCION VARCHAR2(255 CHAR),
+  4  	     NOMBRE VARCHAR2(255 CHAR)
+  5  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_TIPO_ESTADO ADD ( CONSTRAINT OT_TIPO_ESTADO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> CREATE SEQUENCE OT_TIPO_PRIORIDAD_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> CREATE TABLE OT_TIPO_PRIORIDAD(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     DESCRIPCION VARCHAR2(255 CHAR),
+  4  	     NOMBRE VARCHAR2(255 CHAR)
+  5  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_TIPO_PRIORIDAD ADD ( CONSTRAINT OT_TIPO_PRIORIDAD_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> CREATE SEQUENCE OT_ORDEN_DE_TRABAJO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FECHA_ULTIMA_ACTUALIZACION TIMESTAMP (6),
+  4  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  5  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  6  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+  7  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+  8  	     NOMBRE VARCHAR2(255 CHAR),
+  9  	     USUARIO VARCHAR2(255 CHAR),
+ 10  	     USUARIO_ID NUMBER(19,0),
+ 11  	     FK_TIPO_ID NUMBER(19,0) NOT NULL ENABLE
+ 12  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO ADD ( CONSTRAINT OT_ORDEN_DE_TRABAJO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO
+  2  ADD CONSTRAINT OT_ORDEN_DE_TRABAJO_FK_TIPO_ID FOREIGN KEY (FK_TIPO_ID) REFERENCES OT_TIPO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.03
+SQL> CREATE SEQUENCE OT_ORDEN_DE_TRABAJO_GEO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_GEO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     ANGULO FLOAT(126),
+  4  	     CLASE_ID NUMBER(19,0),
+  5  	     CLASE_NOMBRE VARCHAR2(255 CHAR),
+  6  	     COLOR NUMBER(10,0),
+  7  	     ELEMENTO_ID NUMBER(19,0),
+  8  	     ESCALA FLOAT(126),
+  9  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+ 10  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+ 11  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+ 12  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+ 13  	     LATITUD FLOAT(126),
+ 14  	     LONGITUD FLOAT(126),
+ 15  	     X FLOAT(126),
+ 16  	     Y FLOAT(126),
+ 17  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE,
+ 18  	     ID_PREVIO NUMBER(19,0),
+ 19  	     ID_SIGUIENTE NUMBER(19,0)
+ 20  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_GEO ADD ( CONSTRAINT OT_ORDEN_DE_TRABAJO_GEO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_GEO
+  2  ADD CONSTRAINT OT_OR_DE_T_GEO_FK_OR_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_GEO
+  2  ADD CONSTRAINT OT_ORDEN_DE_T_GEO_ID_PREV FOREIGN KEY (ID_PREVIO) REFERENCES OT_ORDEN_DE_TRABAJO_GEO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_GEO
+  2  ADD CONSTRAINT OT_ORDEN_DE_T_GEO_ID_SIG FOREIGN KEY (ID_SIGUIENTE) REFERENCES OT_ORDEN_DE_TRABAJO_GEO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> 
+SQL> CREATE SEQUENCE OT_OT_COMENTARIO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_COMENTARIO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     ACTIVO NUMBER(1,0),
+  4  	     COMENTARIO VARCHAR2(255 CHAR),
+  5  	     FECHA_ACTUALIZACION TIMESTAMP (6),
+  6  	     FECHA_CREACION TIMESTAMP (6),
+  7  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  8  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  9  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+ 10  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+ 11  	     USUARIO VARCHAR2(255 CHAR),
+ 12  	     USUARIO_ID NUMBER(19,0),
+ 13  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE
+ 14  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_COMENTARIO ADD ( CONSTRAINT OT_ORDEN_DE_TRABAJO_COMENT_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_COMENTARIO
+  2  ADD CONSTRAINT OT_O_DE_T_COMENT_FK_O_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> CREATE SEQUENCE OT_ORDEN_DE_TRABAJO_ESTADO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_ESTADO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  4  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  5  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+  6  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+  7  	     FK_TIPO_ESTADO_ID NUMBER(19,0) NOT NULL ENABLE,
+  8  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE,
+  9  	     ID_PREVIO NUMBER(19,0),
+ 10  	     ID_SIGUIENTE NUMBER(19,0)
+ 11  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ESTADO ADD ( CONSTRAINT OT_ORDEN_DE_TRABAJO_ESTADO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ESTADO
+  2  ADD CONSTRAINT OT_O_DE_T_ESTADO_FK_O_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ESTADO
+  2  ADD CONSTRAINT OT_O_DE_T_EST_FK_TIPO_EST_ID FOREIGN KEY (FK_TIPO_ESTADO_ID) REFERENCES OT_TIPO_ESTADO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ESTADO
+  2  ADD CONSTRAINT OT_ORDEN_DE_T_ESTADO_ID_PREV FOREIGN KEY (ID_PREVIO) REFERENCES OT_ORDEN_DE_TRABAJO_ESTADO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ESTADO
+  2  ADD CONSTRAINT OT_ORDEN_DE_T_ESTADO_ID_SIG FOREIGN KEY (ID_SIGUIENTE) REFERENCES OT_ORDEN_DE_TRABAJO_ESTADO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE SEQUENCE OT_OT_PRIORIDAD_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  4  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  5  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+  6  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+  7  	     FK_TIPO_PRIORIDAD_ID NUMBER(19,0) NOT NULL ENABLE,
+  8  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE,
+  9  	     ID_PREVIO NUMBER(19,0),
+ 10  	     ID_SIGUIENTE NUMBER(19,0)
+ 11  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD ADD ( CONSTRAINT OT_ORDEN_DE_TRAB_PRIORIDAD_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD
+  2  ADD CONSTRAINT OT_O_DE_T_PRIORI_FK_O_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD
+  2  ADD CONSTRAINT OT_O_DE_T_PRIO_FK_TIPO_PRIO_ID FOREIGN KEY (FK_TIPO_PRIORIDAD_ID) REFERENCES OT_TIPO_PRIORIDAD(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD
+  2  ADD CONSTRAINT OT_O_DE_T_PRIORI_ID_PREV FOREIGN KEY (ID_PREVIO) REFERENCES OT_ORDEN_DE_TRABAJO_PRIORIDAD(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_PRIORIDAD
+  2  ADD CONSTRAINT OT_O_DE_T_PRIORI_ID_SIGUIENTE FOREIGN KEY (ID_SIGUIENTE) REFERENCES OT_ORDEN_DE_TRABAJO_PRIORIDAD(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE SEQUENCE OT_OT_ARCHIVO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_ARCHIVO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  4  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  5  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+  6  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+  7  	     NOMBRE VARCHAR2(255 CHAR),
+  8  	     RUTA_CARPETA_ARCHIVO VARCHAR2(255 CHAR),
+  9  	     TAMANO NUMBER(19,0),
+ 10  	     TYPO_ARCHIVO VARCHAR2(255 CHAR),
+ 11  	     URL_DESCARGA_ARCHIVO VARCHAR2(255 CHAR),
+ 12  	     USUARIO VARCHAR2(255 CHAR),
+ 13  	     USUARIO_ID NUMBER(19,0),
+ 14  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE
+ 15  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ARCHIVO ADD ( CONSTRAINT OT_ORDEN_DE_TRABAJO_ARCHIVO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ARCHIVO
+  2  ADD CONSTRAINT OT_O_DE_T_ARCHIVO_FK_O_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> CREATE SEQUENCE OT_ATRIBUTO_TIPO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> CREATE TABLE OT_ATRIBUTO_TIPO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     DESCRIPCION VARCHAR2(255 CHAR),
+  4  	     NOMBRE VARCHAR2(255 CHAR),
+  5  	     TIPO_CAMPO_HTML VARCHAR2(255 CHAR)
+  6  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ATRIBUTO_TIPO ADD ( CONSTRAINT OT_ATRIBUTO_TIPO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> CREATE SEQUENCE OT_ATRIBUTO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_ATRIBUTO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     DESCRIPCION VARCHAR2(255 CHAR),
+  4  	     HTML_ADDON_LEFT_CLASS VARCHAR2(255 CHAR),
+  5  	     HTML_ADDON_LEFT_TEXT VARCHAR2(255 CHAR),
+  6  	     HTML_ADDON_RIGHT_CLASS VARCHAR2(255 CHAR),
+  7  	     HTML_ADDON_RIGHT_TEXT VARCHAR2(255 CHAR),
+  8  	     HTML_DESCRIPCION VARCHAR2(255 CHAR),
+  9  	     HTML_DISABLE NUMBER(1,0),
+ 10  	     HTML_FIELD_TYPE VARCHAR2(255 CHAR),
+ 11  	     HTML_HIDE NUMBER(1,0),
+ 12  	     HTML_LABEL VARCHAR2(255 CHAR),
+ 13  	     HTML_PLACE_HOLDER VARCHAR2(255 CHAR),
+ 14  	     HTML_READONLY NUMBER(1,0),
+ 15  	     HTML_REQUIRED NUMBER(1,0),
+ 16  	     NOMBRE VARCHAR2(255 CHAR),
+ 17  	     ORDEN NUMBER(10,0),
+ 18  	     VALOR_DEFECTO VARCHAR2(255 CHAR),
+ 19  	     VALOR_MAXIMO VARCHAR2(255 CHAR),
+ 20  	     VALOR_MINIMO VARCHAR2(255 CHAR),
+ 21  	     FK_ATRIBUTO_TIPO_ID NUMBER(19,0) NOT NULL ENABLE
+ 22  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ATRIBUTO ADD ( CONSTRAINT OT_ATRIBUTO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ATRIBUTO
+  2  ADD CONSTRAINT OT_ATRIB_FK_ATRIB_TIPO_ID FOREIGN KEY (FK_ATRIBUTO_TIPO_ID) REFERENCES OT_ATRIBUTO_TIPO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE SEQUENCE OT_OT_ATRIBUTO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FECHA_INCREMENTO_DESDE TIMESTAMP (6),
+  4  	     ID_INCREMENTO_DESDE NUMBER(19,0),
+  5  	     FECHA_INCREMENTO_HASTA TIMESTAMP (6),
+  6  	     ID_INCREMENTO_HASTA NUMBER(19,0),
+  7  	     VALOR VARCHAR2(255 CHAR),
+  8  	     FK_ATRIBUTO_ID NUMBER(19,0) NOT NULL ENABLE,
+  9  	     FK_ORDEN_DE_TRABAJO_ID NUMBER(19,0) NOT NULL ENABLE,
+ 10  	     ID_PREVIO NUMBER(19,0),
+ 11  	     ID_SIGUIENTE NUMBER(19,0)
+ 12  );
+
+Table created.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO ADD ( CONSTRAINT OT_ORDEN_DE_TRAB_ATRIBUTO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO
+  2  ADD CONSTRAINT OT_O_DE_T_ATRIB_FK_O_DE_T_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_ID) REFERENCES OT_ORDEN_DE_TRABAJO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO
+  2  ADD CONSTRAINT OT_O_DE_T_ATR_FK_TIPO_PRIOR_ID FOREIGN KEY (FK_ATRIBUTO_ID) REFERENCES OT_ATRIBUTO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO
+  2  ADD CONSTRAINT OT_O_DE_T_ATRIBUTO_ID_PREV FOREIGN KEY (ID_PREVIO) REFERENCES OT_ORDEN_DE_TRABAJO_ATRIBUTO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> ALTER TABLE OT_ORDEN_DE_TRABAJO_ATRIBUTO
+  2  ADD CONSTRAINT OT_O_DE_T_ATRIBUTO_ID_SIG FOREIGN KEY (ID_SIGUIENTE) REFERENCES OT_ORDEN_DE_TRABAJO_ATRIBUTO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE SEQUENCE OT_ATRIBUTO_OPCION_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_ATRIBUTO_OPCION(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     DESCRIPCION VARCHAR2(255 CHAR),
+  4  	     ETIQUETA VARCHAR2(255 CHAR),
+  5  	     NOMBRE VARCHAR2(255 CHAR),
+  6  	     FK_ATRIBUTO_ID NUMBER(19,0) NOT NULL ENABLE
+  7  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_ATRIBUTO_OPCION ADD ( CONSTRAINT OT_ATRIBUTO_OPCION_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> ALTER TABLE OT_ATRIBUTO_OPCION
+  2  ADD CONSTRAINT OT_ATRIB_OPCION_FK_ATRIB_ID FOREIGN KEY (FK_ATRIBUTO_ID) REFERENCES OT_ATRIBUTO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE SEQUENCE OT_REL_OT_TIPO_ATRIBUTO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_REL_OT_TIPO_ATRIBUTO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FK_ATRIBUTO_ID NUMBER(19,0) NOT NULL ENABLE,
+  4  	     FK_ORDEN_DE_TRABAJO_TIPO_ID NUMBER(19,0) NOT NULL ENABLE
+  5  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_REL_OT_TIPO_ATRIBUTO ADD ( CONSTRAINT OT_REL_OT_TIPO_ATRIBUTO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_REL_OT_TIPO_ATRIBUTO
+  2  ADD CONSTRAINT OT_REL_OT_TIPO_ATR_FK_ATR_ID FOREIGN KEY (FK_ATRIBUTO_ID) REFERENCES OT_ATRIBUTO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> ALTER TABLE OT_REL_OT_TIPO_ATRIBUTO
+  2  ADD CONSTRAINT OT_REL_OT_T_ATR_FK_OT_TIPO_ID FOREIGN KEY (FK_ORDEN_DE_TRABAJO_TIPO_ID) REFERENCES OT_TIPO(ID);
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> CREATE SEQUENCE OT_PERMISO_GRUPO_TIPO_EST_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE TABLE OT_PERMISO_GRUPO_TIPO_ESTADO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     GRUPO_NOMBRE VARCHAR2(255 BYTE),
+  4  	     TIPO_ESTADO_ID NUMBER(19,0) NOT NULL ENABLE
+  5  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_PERMISO_GRUPO_TIPO_ESTADO ADD ( CONSTRAINT OT_PERMISO_GRUPO_TIPO_EST_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> CREATE SEQUENCE OT_PERMISO_GRUPO_TIPO_SEQ
+  2    MINVALUE 1
+  3    MAXVALUE 999999999999999999999999999
+  4    START WITH 1
+  5    INCREMENT BY 1
+  6    CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE TABLE OT_PERMISO_GRUPO_TIPO(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     GRUPO_NOMBRE VARCHAR2(255 BYTE),
+  4  	     TIPO_ID NUMBER(19,0) NOT NULL ENABLE
+  5  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> ALTER TABLE OT_PERMISO_GRUPO_TIPO ADD ( CONSTRAINT OT_PERMISO_GRUPO_TIPO_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> --< views >--
+SQL> 	     create or replace view ot_query_orden_de_trabajo
+  2  
+SQL> 	     as
+SP2-0042: unknown command "as" - rest of line ignored.
+SQL> 	     select
+  2  	     ot.id,
+  3  	     ot.id as orden_de_trabajo_id,
+  4  	     ot.nombre,
+  5  	     otg.elemento_id ,
+  6  	     otg.clase_id,
+  7  	     otg.clase_nombre,
+  8  	     otg.x,
+  9  	     otg.y,
+ 10  	     otg.latitud,
+ 11  	     otg.longitud,
+ 12  	     ote.fk_tipo_estado_id as estado_id,
+ 13  	     otte.nombre as estado_nombre,
+ 14  	     otp.fk_tipo_prioridad_id as prioridad_id,
+ 15  	     ottp.nombre as prioridad_nombre,
+ 16  	     ot.fk_tipo_id as tipo_id,
+ 17  	     ott.nombre as tipo_nombre,
+ 18  	     ot.usuario_id  as usuario_id,
+ 19  	     ot.usuario as usuario_creacion,
+ 20  	     ot.fecha_incremento_desde as fecha_creacion,
+ 21  	     ot.fecha_ultima_actualizacion
+ 22  	     from ot_orden_de_trabajo ot
+ 23  	     inner join ot_orden_de_trabajo_geo otg		     on otg.fk_orden_de_trabajo_id = ot.id
+ 24  	     inner join ot_orden_de_trabajo_estado ote		     on ote.fk_orden_de_trabajo_id = ot.id
+ 25  	     inner join ot_tipo_estado otte				     on otte.id = ote.fk_tipo_estado_id
+ 26  	     inner join ot_orden_de_trabajo_prioridad otp    on  otp.fk_orden_de_trabajo_id = ot.id
+ 27  	     inner join ot_tipo_prioridad  ottp 		     on ottp.id = otp.fk_tipo_prioridad_id
+ 28  	     inner join ot_tipo ott						     on ott.id = ot.fk_tipo_id
+ 29  	     where ote.id_incremento_hasta = 0 and otg.id_incremento_hasta = 0 and
+ 30  	     otp.id_incremento_hasta = 0 ;
+
+no rows selected
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> 	     create or replace view ot_query_ot_archivo
+  2  	     as
+  3  	     select
+  4  	     id,
+  5  	     fecha_incremento_desde,
+  6  	     id_incremento_desde,
+  7  	     fecha_incremento_hasta,
+  8  	     id_incremento_hasta,
+  9  	     nombre,
+ 10  	     ruta_carpeta_archivo,
+ 11  	     tamano,
+ 12  	     typo_archivo,
+ 13  	     url_descarga_archivo,
+ 14  	     fecha_incremento_desde as fecha_actualizacion,
+ 15  	     usuario as usuario_creacion,
+ 16  	     usuario_id,
+ 17  	     fk_orden_de_trabajo_id,
+ 18  	     id as original_id
+ 19  
+SQL> 	     from  ot_orden_de_trabajo_archivo
+SP2-0734: unknown command beginning "from  ot_o..." - rest of line ignored.
+SQL> 	     where id_incremento_hasta = 0 ;
+SP2-0734: unknown command beginning "where id_i..." - rest of line ignored.
+SQL> 
+SQL> 
+SQL> 	     create or replace view ot_query_ot_atributo
+  2  	     as
+  3  	     select
+  4  	     otra.id,
+  5  	     otra.id  as original_id,
+  6  	     fk_orden_de_trabajo_id,
+  7  	     fk_atributo_id as atributo_id,
+  8  	     ota.nombre as atributo_nombre,
+  9  	     valor,
+ 10  	     otra.fecha_incremento_desde as fecha_actualizacion,
+ 11  	     null as usuario_id,
+ 12  	     null as usuario_creacion
+ 13  	     from ot_orden_de_trabajo_atributo	otra
+ 14  	     inner join ot_atributo ota on ota.id = otra.fk_atributo_id
+ 15  	     where otra.id_incremento_hasta = 0;
+
+View created.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> 
+SQL> create or replace view ot_query_ot_comentario
+  2  as
+  3  select
+  4  id,
+  5  id as original_id,
+  6  fk_orden_de_trabajo_id,
+  7  activo,
+  8  comentario,
+  9  usuario_id,
+ 10  usuario as usuario_creacion,
+ 11  fecha_actualizacion
+ 12  from ot_orden_de_trabajo_comentario
+ 13  where id_incremento_hasta = 0 ;
+
+View created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> CREATE SEQUENCE V_VERSION_SEQ
+  2  MINVALUE 1
+  3  MAXVALUE 999999999999999999999999999
+  4  START WITH 1
+  5  INCREMENT BY 1
+  6  CACHE 20;
+
+Sequence created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> CREATE OR REPLACE SYNONYM VERSION_ID_SEQ FOR V_VERSION_SEQ;
+
+Synonym created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> CREATE TABLE V_VERSION(
+  2  	     ID NUMBER(19,0) NOT NULL,
+  3  	     FEC_INC TIMESTAMP (6),
+  4  	     ESTADO NUMBER(19,0),
+  5  	     ID_USUARIO NUMBER(19,0),
+  6  	     ID_ORIGEN NUMBER(19,0),
+  7  	     ORIGEN VARCHAR2(255 CHAR),
+  8  	     ID_EXT NUMBER(19,0),
+  9  	     ID_LOTE NUMBER(19,0),
+ 10  	     FEC_IMPACTO TIMESTAMP (6),
+ 11  	     EXTRA VARCHAR2(255 CHAR),
+ 12  	     FEC_VER TIMESTAMP (6),
+ 13  	     FEC_ACT_EST TIMESTAMP (6)
+ 14  	     );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> 
+SQL> ALTER TABLE V_VERSION ADD ( CONSTRAINT V_VERSION_PK PRIMARY KEY (ID));
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> /
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> show errors;
+No errors.
+SQL> 
+SQL> exit
