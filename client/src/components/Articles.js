@@ -5,11 +5,11 @@ const Articles = ({ articles }) => {
   return (
     <>
       {articles.map((article, index) => (
-        <div key={index} className='p-4 md:w-1/2'>
+        <div key={index} className='p-4 w-full md:w-1/2 lg:w-1/3'>
           <div className='h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden'>
             <Link to={`/article/${article.name}`}>
               <img
-                className='lg:h-48 md:h-36 w-full object-cover object-center'
+                className='w-full h-48 md:h-36 lg:h-48 object-cover object-center'
                 src={article.thumbnail}
                 alt='blog'
               />
@@ -23,12 +23,12 @@ const Articles = ({ articles }) => {
               <p className='leading-relaxed mb-3'>
                 {article.content[0].substring(0, 110)}...
               </p>
-              <div className='flex item-center flex-wrap'>
+              <div className='flex items-center flex-wrap'>
                 <Link
                   className='text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0'
                   to={`/article/${article.name}`}
                 >
-                  Leer mas
+                  Leer más
                 </Link>
               </div>
             </div>
@@ -40,3 +40,4 @@ const Articles = ({ articles }) => {
 };
 
 export default Articles;
+

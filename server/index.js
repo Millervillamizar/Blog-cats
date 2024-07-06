@@ -1,22 +1,15 @@
-// server/index.js
+// index.js
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const routes = require('./src/routes/routes');
+const commentRoutes = require('./src/routes/commentRoutes');
+const knex = require('./src/db/knex');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
 
-// Configurar middleware
-app.use(cors());
 app.use(bodyParser.json());
+app.use('/api/comments', commentRoutes);
 
-// Usar las rutas definidas
-app.use('/', routes);
-
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en el puerto ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
-
-
