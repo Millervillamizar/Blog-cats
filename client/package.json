@@ -41,4 +41,5 @@
     ]
   },
   "proxy": "http://blog-cats-production.up.railway.app:5000"
+
 }
