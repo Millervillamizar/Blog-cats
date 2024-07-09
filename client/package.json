@@ -40,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "blog-cats-production.up.railway.app"
+  "proxy": "https://blog-cats-production.up.railway.app"
 }
