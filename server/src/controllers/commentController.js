@@ -26,14 +26,12 @@ exports.createComment = async (req, res) => {
   }
 };
 
-// Editar un comentario existente
 exports.updateComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const { text } = req.body;
-    const id = parseInt(commentId, 10); // Asegúrate de que el id es un número
-    const [updatedComment] = await Comment.update(id, { content: text });
-    res.json(updatedComment);
+    const updatedComments = await Comment.update(commentId, { content: text });
+    res.json(updatedComments);
   } catch (error) {
     console.error('Error updating comment:', error);
     res.status(500).json({ error: "Internal Server Error" });
