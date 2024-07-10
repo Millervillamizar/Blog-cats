@@ -22,8 +22,8 @@ const Article = () => {
         const text = await result.text();  // obtener la respuesta como texto
         console.log(text);  // imprimir la respuesta completa
         if (!result.ok) {
-          throw new Error(`Failed to fetch comments: ${result.statusText}`);
-        }
+          throw new Error(`API request failed: ${result.status} ${result.statusText}`);
+        }        
         const body = JSON.parse(text);  // intentar analizar la respuesta como JSON
         setArticleInfo((prevInfo) => ({ ...prevInfo, comments: body }));
       } catch (error) {
