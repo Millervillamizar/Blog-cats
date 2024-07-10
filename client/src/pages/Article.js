@@ -66,7 +66,8 @@ const Article = () => {
       if (!result.ok) {
         throw new Error(`Failed to update comment: ${result.statusText}`);
       }
-      const [updatedComment] = await result.json();
+      const updatedComments = await result.json();
+      const updatedComment = updatedComments[0]; // Obtén el primer (y único) comentario del array
       setArticleInfo((prevInfo) => ({
         ...prevInfo,
         comments: prevInfo.comments.map((comment) =>
