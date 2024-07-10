@@ -20,7 +20,6 @@ const Article = () => {
       try {
         const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${name}`);
         const text = await result.text(); // obtener la respuesta como texto
-        console.log(text); // imprimir la respuesta completa
 
         if (!result.ok) {
           throw new Error(`API request failed: ${result.status} ${result.statusText}`);
