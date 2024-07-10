@@ -19,10 +19,12 @@ const Article = () => {
     const fetchData = async () => {
       try {
         const result = await fetch(`/api/comments/${name}`);
+        const text = await result.text();  // obtener la respuesta como texto
+        console.log(text);  // imprimir la respuesta completa
         if (!result.ok) {
           throw new Error(`Failed to fetch comments: ${result.statusText}`);
         }
-        const body = await result.json();
+        const body = JSON.parse(text);  // intentar analizar la respuesta como JSON
         setArticleInfo((prevInfo) => ({ ...prevInfo, comments: body }));
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -30,6 +32,7 @@ const Article = () => {
     };
     fetchData();
   }, [name]);
+  
 
   if (!article) return <NotFound />;
   const otherArticles = articleContent.filter(
