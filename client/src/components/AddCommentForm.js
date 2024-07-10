@@ -1,4 +1,3 @@
-// src/components/AddCommentForm.js
 import React, { useState } from "react";
 
 const AddCommentForm = ({ articleName, setArticleInfo }) => {
@@ -6,8 +5,8 @@ const AddCommentForm = ({ articleName, setArticleInfo }) => {
   const [commentText, setCommentText] = useState("");
 
   const addComments = async () => {
-    const result = await fetch(`/api/comments/${articleName}/add-comments`, {
-      method: "post",
+    const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${articleName}/add-comments`, {
+      method: "POST",
       body: JSON.stringify({ username, text: commentText }),
       headers: {
         "Content-Type": "application/json",
@@ -57,3 +56,4 @@ const AddCommentForm = ({ articleName, setArticleInfo }) => {
 };
 
 export default AddCommentForm;
+
