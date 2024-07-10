@@ -67,6 +67,9 @@ const Article = () => {
         throw new Error(`Failed to update comment: ${result.statusText}`);
       }
       const updatedComments = await result.json();
+      if (updatedComments.length === 0) {
+        throw new Error('Comment not found');
+      }
       const updatedComment = updatedComments[0]; // Obtén el primer (y único) comentario del array
       setArticleInfo((prevInfo) => ({
         ...prevInfo,
