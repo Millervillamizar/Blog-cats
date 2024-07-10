@@ -43,7 +43,7 @@ const Article = () => {
       }
       setArticleInfo((prevInfo) => ({
         ...prevInfo,
-        comments: prevInfo.comments.filter((comment) => comment.id !== commentId),
+        comments: prevInfo.comments.filter((comment) => comment.id !== parseInt(commentId, 10)),
       }));
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -66,7 +66,7 @@ const Article = () => {
       if (!result.ok) {
         throw new Error(`Failed to update comment: ${result.statusText}`);
       }
-      const updatedComment = await result.json();
+      const [updatedComment] = await result.json();
       setArticleInfo((prevInfo) => ({
         ...prevInfo,
         comments: prevInfo.comments.map((comment) =>

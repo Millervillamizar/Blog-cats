@@ -7,6 +7,7 @@ exports.getCommentsByArticleName = async (req, res) => {
     const comments = await Comment.findByArticleName(articleName);
     res.json(comments);
   } catch (error) {
+    console.error('Error getting comments:', error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -20,6 +21,7 @@ exports.createComment = async (req, res) => {
     const comments = await Comment.findByArticleName(articleName);
     res.json(comments);
   } catch (error) {
+    console.error('Error creating comment:', error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -29,10 +31,11 @@ exports.updateComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const { text } = req.body;
-    await Comment.update({ id: commentId }, { content: text });
-    const updatedComment = await Comment.findById(commentId);
+    const id = parseInt(commentId, 10); // Asegúrate de que el id es un número
+    const [updatedComment] = await Comment.update(id, { content: text });
     res.json(updatedComment);
   } catch (error) {
+    console.error('Error updating comment:', error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -41,9 +44,11 @@ exports.updateComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    await Comment.delete({ id: commentId });
+    const id = parseInt(commentId, 10); // Asegúrate de que el id es un número
+    await Comment.delete(id);
     res.json({ success: true });
   } catch (error) {
+    console.error('Error deleting comment:', error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
