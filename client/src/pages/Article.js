@@ -18,21 +18,30 @@ const Article = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetch(`/api/comments/${name}`);
-        const text = await result.text();  // obtener la respuesta como texto
-        console.log(text);  // imprimir la respuesta completa
+        const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${name}`);
+        const text = await result.text(); // obtener la respuesta como texto
+        console.log(text); // imprimir la respuesta completa
+
         if (!result.ok) {
           throw new Error(`API request failed: ${result.status} ${result.statusText}`);
-        }        
-        const body = JSON.parse(text);  // intentar analizar la respuesta como JSON
+        }
+
+        // Intentar analizar la respuesta como JSON
+        let body;
+        try {
+          body = JSON.parse(text);
+        } catch (jsonError) {
+          throw new Error(`Failed to parse JSON: ${jsonError.message}`);
+        }
+
         setArticleInfo((prevInfo) => ({ ...prevInfo, comments: body }));
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
     };
+
     fetchData();
   }, [name]);
-  
 
   if (!article) return <NotFound />;
   const otherArticles = articleContent.filter(
@@ -62,4 +71,5 @@ const Article = () => {
 };
 
 export default Article;
+
 
