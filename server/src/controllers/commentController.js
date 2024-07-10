@@ -26,24 +26,17 @@ exports.createComment = async (req, res) => {
   }
 };
 
-const Comment = require('../models/Comment');
-
-// Editar un comentario existente
 exports.updateComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const { text } = req.body;
     const updatedComments = await Comment.update(commentId, { content: text });
-    if (updatedComments.length === 0) {
-      return res.status(404).json({ error: "Comment not found" });
-    }
     res.json(updatedComments);
   } catch (error) {
     console.error('Error updating comment:', error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 // Eliminar un comentario existente
 exports.deleteComment = async (req, res) => {

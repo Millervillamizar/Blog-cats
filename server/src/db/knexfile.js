@@ -1,4 +1,3 @@
-// src/db/knexfile.js
 require('dotenv').config({ path: '../../.env' });
 
 module.exports = {
@@ -17,5 +16,21 @@ module.exports = {
     seeds: {
       directory: './seeds'
     }
+  },
+  production: {
+    client: 'pg',
+    connection: {
+      host: process.env.PGHOST || 'roundhouse.proxy.rlwy.net',
+      user: process.env.PGUSER || 'postgres',
+      password: process.env.PGPASSWORD || 'dOOBhsjWjAKIXhPvoNvBsWEXQbbjPykb',
+      database: process.env.PGDATABASE || 'railway',
+      port: process.env.PGPORT || 16453
+    },
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
+    }
   }
-};
+}
