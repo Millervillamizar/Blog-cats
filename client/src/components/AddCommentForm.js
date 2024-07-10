@@ -1,61 +1,91 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+
+// Esquema de validación con Yup
+const CommentSchema = Yup.object().shape({
+  username: Yup.string()
+    .required('El nombre es requerido'),
+  text: Yup.string()
+    .min(10, 'El comentario es demasiado corto - debe tener al menos 10 caracteres')
+    .max(500, 'El comentario es demasiado largo - no puede tener más de 500 caracteres')
+    .required('El texto del comentario es requerido'),
+});
 
 const AddCommentForm = ({ articleName, setArticleInfo }) => {
-  const [username, setUsername] = useState("");
-  const [commentText, setCommentText] = useState("");
+  const [charCount, setCharCount] = useState(0);
 
-  const addComments = async () => {
-    const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${articleName}/add-comments`, {
-      method: "POST",
-      body: JSON.stringify({ username, text: commentText }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!result.ok) {
-      console.error(`Failed to add comment: ${result.statusText}`);
-      return;
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${articleName}/add-comments`, {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!result.ok) {
+        console.error(`Failed to add comment: ${result.statusText}`);
+        return;
+      }
+      const body = await result.json();
+      setArticleInfo((prevInfo) => ({ ...prevInfo, comments: body }));
+      resetForm();
+      setCharCount(0); // Resetear contador de caracteres después de enviar el formulario
+    } catch (error) {
+      console.error("Error adding comment:", error);
     }
-    const body = await result.json();
-    setArticleInfo((prevInfo) => ({ ...prevInfo, comments: body }));
-    setUsername("");
-    setCommentText("");
   };
 
   return (
-    <form className='shadow rounded px-8 pt-6 pb-8 mb-4'>
-      <h3 className='text-xl font-bold mb-4 text-gray-900'>Agrega un comentario</h3>
-      <label className='block text-gray-700 text-sm font-bold mb-2'>
-        Nombre:
-      </label>
-      <input
-        type='text'
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-      />
-      <label className='block text-gray-700 text-sm font-bold mb-2'>
-        Comentario:
-      </label>
-      <textarea
-        rows='4'
-        cols='50'
-        value={commentText}
-        onChange={(e) => setCommentText(e.target.value)}
-        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-      />
-      <button
-        type='button'
-        onClick={addComments}
-        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-      >
-        Enviar
-      </button>
-    </form>
+    <Formik
+      initialValues={{ username: '', text: '' }}
+      validationSchema={CommentSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ isSubmitting, handleChange, values }) => (
+        <Form className='shadow rounded px-8 pt-6 pb-8 mb-4'>
+          <h3 className='text-xl font-bold mb-4 text-gray-900'>Agrega un comentario</h3>
+          <label className='block text-gray-700 text-sm font-bold mb-2'>
+            Nombre:
+          </label>
+          <Field
+            type='text'
+            name='username'
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          />
+          <ErrorMessage name='username' component='div' className='text-red-500 text-xs italic' />
+
+          <label className='block text-gray-700 text-sm font-bold mb-2'>
+            Comentario:
+          </label>
+          <Field
+            as='textarea'
+            name='text'
+            rows='4'
+            cols='50'
+            onChange={(e) => {
+              handleChange(e);
+              setCharCount(e.target.value.length);
+            }}
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          />
+          <div className='text-right text-gray-600 text-xs'>
+            {charCount}/500 caracteres
+          </div>
+          <ErrorMessage name='text' component='div' className='text-red-500 text-xs italic' />
+
+          <button
+            type='submit'
+            disabled={isSubmitting}
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4'
+          >
+            Enviar
+          </button>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
 export default AddCommentForm;
-
-
-
