@@ -32,6 +32,7 @@ const Article = () => {
         console.error("Error fetching comments:", error);
       }
     };
+    
     fetchData();
   }, [name]);
 
