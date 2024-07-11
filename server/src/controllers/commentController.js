@@ -15,14 +15,14 @@ exports.getCommentsByArticleName = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const { articleName } = req.params;
-    const { userId, text } = req.body;
+    const { userId, author, text } = req.body;
 
     // Validación de longitud del comentario
     if (text.length < 10 || text.length > 500) {
       return res.status(400).json({ error: 'El comentario debe tener entre 10 y 500 caracteres' });
     }
 
-    const comment = await Comment.create({ article_name: articleName, user_id: userId, content: text });
+    const comment = await Comment.create({ article_name: articleName, user_id: userId, author, content: text });
     const comments = await Comment.findByArticleName(articleName);
     res.json(comments);
   } catch (error) {

@@ -26,7 +26,7 @@ const AddCommentForm = ({ articleName, setArticleInfo }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: user.email, text: commentText, userId: user.id }),
+        body: JSON.stringify({ userId: user.id, author: user.email, text: commentText }),
       });
 
       if (!result.ok) {
@@ -73,4 +73,3 @@ const AddCommentForm = ({ articleName, setArticleInfo }) => {
 };
 
 export default AddCommentForm;
-
