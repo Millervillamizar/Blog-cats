@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import articleContent from "./article-content";
 
@@ -9,6 +9,7 @@ import NotFound from "./NotFound";
 import Articles from "../components/Articles";
 import CommentsList from "../components/CommentsList";
 import AddCommentForm from "../components/AddCommentForm";
+import AuthContext from "../AuthContext";
 
 const Article = () => {
   const { name } = useParams();
@@ -17,6 +18,7 @@ const Article = () => {
   const [editComment, setEditComment] = useState(null);
   const [editText, setEditText] = useState('');
   const [editCharCount, setEditCharCount] = useState(0);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +34,6 @@ const Article = () => {
         console.error("Error fetching comments:", error);
       }
     };
-    
     fetchData();
   }, [name]);
 
@@ -40,6 +41,10 @@ const Article = () => {
     try {
       const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${commentId}/delete`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id }),
       });
       if (!result.ok) {
         throw new Error(`Failed to delete comment: ${result.statusText}`);
@@ -71,7 +76,7 @@ const Article = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: editText }),
+        body: JSON.stringify({ userId: user.id, text: editText }),
       });
       if (!result.ok) {
         throw new Error(`Failed to update comment: ${result.statusText}`);
