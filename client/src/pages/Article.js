@@ -21,7 +21,7 @@ const Article = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetch(`/api/comments/${name}`);
+        const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${name}`);
         const text = await result.text();
         if (!result.ok) {
           throw new Error(`API request failed: ${result.status} ${result.statusText}`);
@@ -37,7 +37,7 @@ const Article = () => {
 
   const handleDelete = async (commentId) => {
     try {
-      const result = await fetch(`/api/comments/${commentId}/delete`, {
+      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${commentId}/delete`, {
         method: 'DELETE',
       });
       if (!result.ok) {
@@ -65,7 +65,7 @@ const Article = () => {
     }
 
     try {
-      const result = await fetch(`/api/comments/${editComment.id}/edit`, {
+      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${editComment.id}/edit`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -21,7 +21,7 @@ const AddCommentForm = ({ articleName, setArticleInfo }) => {
     }
 
     try {
-      const result = await fetch(`/api/comments/${articleName}/add-comments`, {
+      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${articleName}/add-comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
