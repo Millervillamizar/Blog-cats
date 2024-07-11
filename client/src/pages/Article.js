@@ -15,11 +15,13 @@ const Article = () => {
   const article = articleContent.find((article) => article.name === name);
   const [articleInfo, setArticleInfo] = useState({ comments: [] });
   const [editComment, setEditComment] = useState(null);
+  const [editText, setEditText] = useState('');
+  const [editCharCount, setEditCharCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${name}`);
+        const result = await fetch(`/api/comments/${name}`);
         const text = await result.text();
         if (!result.ok) {
           throw new Error(`API request failed: ${result.status} ${result.statusText}`);
@@ -35,7 +37,7 @@ const Article = () => {
 
   const handleDelete = async (commentId) => {
     try {
-      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${commentId}/delete`, {
+      const result = await fetch(`/api/comments/${commentId}/delete`, {
         method: 'DELETE',
       });
       if (!result.ok) {
@@ -52,16 +54,23 @@ const Article = () => {
 
   const handleEdit = (comment) => {
     setEditComment(comment);
+    setEditText(comment.content);
+    setEditCharCount(comment.content.length);
   };
 
-  const handleUpdateComment = async (text) => {
+  const handleUpdateComment = async () => {
+    if (editText.trim() === '') {
+      alert('El comentario no puede estar vacío.');
+      return;
+    }
+
     try {
-      const result = await fetch(`https://blog-cats-production.up.railway.app/api/comments/${editComment.id}/edit`, {
+      const result = await fetch(`/api/comments/${editComment.id}/edit`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text: editText }),
       });
       if (!result.ok) {
         throw new Error(`Failed to update comment: ${result.statusText}`);
@@ -78,9 +87,15 @@ const Article = () => {
         ),
       }));
       setEditComment(null);
+      setEditText('');
+      setEditCharCount(0);
     } catch (error) {
       console.error('Error updating comment:', error);
     }
+  };
+
+  const formatComment = (comment) => {
+    return comment.replace(/(.{60})/g, '$1\n');
   };
 
   if (!article) return <NotFound />;
@@ -99,15 +114,32 @@ const Article = () => {
         </p>
       ))}
       <AddCommentForm articleName={name} setArticleInfo={setArticleInfo} />
-      <CommentsList comments={articleInfo.comments} onDelete={handleDelete} onEdit={handleEdit} />
+      <CommentsList 
+        comments={articleInfo.comments.map(comment => ({
+          ...comment,
+          content: formatComment(comment.content)
+        }))} 
+        onDelete={handleDelete} 
+        onEdit={handleEdit} 
+      />
       {editComment && (
         <div className="mb-4">
           <textarea
-            value={editComment.content}
-            onChange={(e) => setEditComment({ ...editComment, content: e.target.value })}
+            value={editText}
+            onChange={(e) => {
+              setEditText(e.target.value);
+              setEditCharCount(e.target.value.length);
+            }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
-          <button onClick={() => handleUpdateComment(editComment.content)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <div className='text-right text-gray-600 text-xs'>
+            {editCharCount}/500 caracteres
+          </div>
+          <button
+            onClick={handleUpdateComment}
+            disabled={editCharCount > 500}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+          >
             Actualizar Comentario
           </button>
         </div>

@@ -7,8 +7,7 @@ exports.getCommentsByArticleName = async (req, res) => {
     const comments = await Comment.findByArticleName(articleName);
     res.json(comments);
   } catch (error) {
-    console.error('Error getting comments:', error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
@@ -16,25 +15,43 @@ exports.getCommentsByArticleName = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const { articleName } = req.params;
-    const { username, text } = req.body;
-    const comment = await Comment.create({ article_name: articleName, author: username, content: text });
+    const { userId, text } = req.body;
+
+    // Validación de longitud del comentario
+    if (text.length < 10 || text.length > 500) {
+      return res.status(400).json({ error: 'El comentario debe tener entre 10 y 500 caracteres' });
+    }
+
+    const comment = await Comment.create({ article_name: articleName, user_id: userId, content: text });
     const comments = await Comment.findByArticleName(articleName);
     res.json(comments);
   } catch (error) {
-    console.error('Error creating comment:', error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error al crear el comentario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+// Editar un comentario existente
 exports.updateComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const { text } = req.body;
+    const { userId, text } = req.body;
+
+    // Verificar que el comentario pertenece al usuario
+    const comment = await Comment.findById(commentId);
+    if (comment.user_id !== userId) {
+      return res.status(403).json({ error: 'No tienes permiso para editar este comentario' });
+    }
+
     const updatedComments = await Comment.update(commentId, { content: text });
+    if (updatedComments.length === 0) {
+      return res.status(404).json({ error: "Comentario no encontrado" });
+    }
+
     res.json(updatedComments);
   } catch (error) {
-    console.error('Error updating comment:', error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error al actualizar el comentario:', error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
@@ -42,11 +59,18 @@ exports.updateComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const id = parseInt(commentId, 10); // Asegúrate de que el id es un número
-    await Comment.delete(id);
+    const { userId } = req.body;
+
+    // Verificar que el comentario pertenece al usuario
+    const comment = await Comment.findById(commentId);
+    if (comment.user_id !== userId) {
+      return res.status(403).json({ error: 'No tienes permiso para eliminar este comentario' });
+    }
+
+    await Comment.delete(commentId);
     res.json({ success: true });
   } catch (error) {
-    console.error('Error deleting comment:', error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error al eliminar el comentario:', error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
