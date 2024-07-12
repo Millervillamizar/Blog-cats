@@ -9,6 +9,7 @@ import Register from './components/Register';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { AuthProvider } from './AuthContext';
+import Sidebar from './components/Sidebar';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Router>
         <div className="min-h-screen flex flex-col bg-opacity-90 bg-white">
           <Navbar />
+          <Sidebar />
           <div className='flex-grow max-w-screen-md mx-auto pt-20'>
             <Routes>
               <Route path='/' element={<Home />} />
