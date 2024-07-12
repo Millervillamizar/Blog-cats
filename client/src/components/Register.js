@@ -22,7 +22,7 @@ const Register = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        alert('Registration successful');
+        alert('Usuario registrado exitosamente');
         navigate('/login'); // Redirige al usuario a la página de login después de registrarse
       } else {
         setError(data.error || 'An error occurred');
